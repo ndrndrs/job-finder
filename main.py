@@ -70,5 +70,6 @@ def main():
     check_vacancy()
 
 
+
 if __name__ == "__main__":
     main()
