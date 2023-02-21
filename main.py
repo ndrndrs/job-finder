@@ -3,11 +3,12 @@ import io
 import requests
 from bs4 import BeautifulSoup
 
+
 def get_vacancies():
     headers = {
         "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36"
     }
-    url = "https://rabota.by/search/vacancy?area=113&search_field=name&search_field=company_name&search_field=description&enable_snippets=true&text=junior+Python+developer"
+    url = "https://rabota.by/search/vacancy?area=113&area=16&professional_role=96&search_field=name&search_field=company_name&search_field=description&enable_snippets=true&text=junior+Python+developer&no_magic=true&L_save_area=true&order_by=publication_time&search_period=30&items_on_page=100"
     response = requests.get(url=url, headers=headers)
 
     soup = BeautifulSoup(response.text, "lxml")
@@ -36,11 +37,12 @@ def get_vacancies():
 
 def check_vacancy():
     with open("new_jobs.json", encoding="utf-8") as file:
+        fresh_jobs = {}
         jobs = json.load(file)
         headers = {
             "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Mobile Safari/537.36"
         }
-        url = "https://rabota.by/search/vacancy?area=113&search_field=name&search_field=company_name&search_field=description&enable_snippets=true&text=junior+Python+developer"
+        url = "https://rabota.by/search/vacancy?area=113&area=16&professional_role=96&search_field=name&search_field=company_name&search_field=description&enable_snippets=true&text=junior+Python+developer&no_magic=true&L_save_area=true&order_by=publication_time&search_period=30&items_on_page=100"
         response = requests.get(url=url, headers=headers)
 
         soup = BeautifulSoup(response.text, "lxml")
@@ -60,14 +62,21 @@ def check_vacancy():
                         "link": link,
                         "city": city
                     }
+
+                    fresh_jobs[key] = {
+                        "title": title,
+                        "link": link,
+                        "city": city
+                    }
                 except AttributeError:
                     continue
+
+    return fresh_jobs
 
 
 def main():
     get_vacancies()
     check_vacancy()
-
 
 
 if __name__ == "__main__":
